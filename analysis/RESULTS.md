@@ -34,7 +34,7 @@ error grows between two recorded values.
 | every 2nd | 1.14 | 0.77 | 0.57 | 0.89 | 1.00 | 1.00 |
 | every 3rd | 1.71 | 0.51 | 0.52 | 0.55 | 1.00 | 1.00 |
 | every 4th | 2.28 | 0.44 | 0.44 | 0.62 | 1.00 | 0.99 |
-| every 6th | 3.43 | 0.41 | 0.45 | 0.51 | 0.99 | 0.74 |
+| every 6th | 3.42 | 0.41 | 0.45 | 0.51 | 0.99 | 0.74 |
 | every 8th | 4.57 | 0.45 | 0.50 | 0.45 | 0.75 | 0.48 |
 
 - Shape methods fall from about 0.99 to chance by λΔt ≈ 1.7; the dynamics method stays at 1.00
