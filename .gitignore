@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 .claude/
 .freebuff/
+analysis/chaos_dysts/data/
+analysis/chaos_dysts/data_ldt*/
