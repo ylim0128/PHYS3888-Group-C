@@ -4,7 +4,7 @@ pandas
 scikit-learn
 scikit-base
 sktime
-pycatch22
+pycatch22<1.0   # 1.0 removed the per-feature functions features.py (fSFA) calls
 fastdtw
 numba
 scipy
