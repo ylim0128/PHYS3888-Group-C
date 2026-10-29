@@ -15,22 +15,6 @@ import csv
 from pathlib import Path
 
 
-# import matplotlib.pyplot as plt
-
-# from sklearn.model_selection import train_test_split
-# from sklearn.linear_model import LogisticRegression, RidgeClassifierCV
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
-# from sklearn.pipeline import make_pipeline
-
-# import pandas as pd
-
-# import pycatch22
-# from sktime.transformations.rocket import MiniRocket
-
-# Testing 
-
-
 
 TITLE = "Time Reversibility"
 DESCRIPTION = (
@@ -39,7 +23,7 @@ DESCRIPTION = (
 )
 
 CONDITION = "Time reversibility"
-N_TESTS = 20                 # series per generator: 500 rows, 10 blocks of 50
+N_TESTS = 25                 # series per generator: 500 rows, 10 blocks of 50
 SEED = 2026
 
 def norm(signal):
@@ -257,22 +241,6 @@ def chirikov(N,l=0,r=1,K=0.971635,n=1,use_p=True):
         return theta
     return p
 
-def henon(N,l=0,r=1,a=1.4,b=0.3,use_x=True):
-    """
-    Standard Henon Map x[t+1]=1-ax[t]^2+y[t], y[t+1] = bx[t].
-    Consider x by default.
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-    x[0] = rand_init(l,r)
-    y[0] = rand_init(l,r)
-    for t in range(1,N):
-        x[t] = 1 - a*x[t-1]**2 + y[t-1]
-        y[t] = b*x[t-1]
-    if use_x==False:
-        return y
-    return x
-
 def quad(N,l=0,r=1,a=1.8):
     """
     Quadratic map with scaling factor a of the form x[t+1]=1-ax[t]^2.
@@ -299,148 +267,9 @@ def logistic_4(N,l=0,r=1):
     Logistic map with R=4, which lies in the fully chaotic regime.
     """
     return logistic(N,4,l,r)
-
-def logistic_38(N,l=0,r=1):
-    """
-    Logistic map with R=3.8284, which lies in the period-3 window, where it exhibits intermittency.
-    """
-    return logistic(N,3.8284,l,r)
-
-
-# Sums of deterministic chaotic maps/flows
-def sum_henon_fr(N,l=0,r=1,a=1.4,b=0.3):
-    """
-    Sum of x components of two independent realisations of the Henon map, with one taken in forward time and the other in reverse.
-    """
-    forward = henon(N,l,r,a,b)
-    reverse = henon(N,l,r,a,b)[::-1]
-
-    return np.mean([forward,reverse])
-
-def sum_henon_fr_eq(N,l=0,a=1.4,b=0.3):
-    """
-    Sum of x components of the forward and reverse time realistations of a single Henon map realisation.
-    """
-    forward = henon(N,l,r,a,b)
-    reverse = forward[::-1]
-
-    return np.mean([forward,reverse])
-
-def sum_quad_fr(N,l=0,r=1,a=1.8):
-    """
-    Sum of x components of two independent realisations of the Quadratic map, with one in forward time and the eother in reverse.
-    """
-    forward = quad(N,l,r,a)
-    reverse = quad(N,l,r,a)[::-1]
-
-    return np.mean([forward,reverse])
-
-def sum_henon(N,l=0,r=1,a=1.4,b=0.3):
-    """
-    Sum of two independenr forward realisations of x components of the Henon map.
-    """
-    map1 = henon(N,l,r,a,b)
-    map2 = henon(N,l,r,a,b)
-
-    return np.mean([map1,map2])
-
-def sum_lorenz(N,lx=-8,rx=8,ly=-8,ry=8,lz=0,rz=10,sigma=10,rho=28,beta=8/3,dt=0.01):
-    """
-    Sum of three independent Lorenz systems with equations dx/dt=sigma(y-x), dy/dt=x(rho-z)-y, dz/dt=xy-betaz.
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-    z = np.zeros(N)
-
-    x[0] = np.random.uniform(lx, rx)
-    y[0] = np.random.uniform(ly,ry)
-    z[0] = np.random.uniform(lz,rz)
-
-    def derivatives(state):
-        x, y, z = state
-        dx = sigma * (y - x)
-        dy = x * (rho - z) - y
-        dz = x * y - beta * z
-        return np.array([dx, dy, dz])
-
-    # RK4 integration
-    for i in range(N - 1):
-        state = np.array([x[i], y[i], z[i]])
-
-        k1 = derivatives(state)
-        k2 = derivatives(state + dt * k1 / 2)
-        k3 = derivatives(state + dt * k2 / 2)
-        k4 = derivatives(state + dt * k3)
-
-        next_state = state + dt / 6 * (k1 + 2*k2 + 2*k3 + k4)
-
-        x[i+1], y[i+1], z[i+1] = next_state
-
-    return np.mean([x, y, z])
-
-def sum_rossler(N,lx=-8,rx=8,ly=-8,ry=8,z0=0,a=0.2,b=0.2,c=5.7,dt=0.01):
-    """
-    Sum of three independent Rossler systems with dx/dt=-y-z, dy/dt=x+ay, dz/dt=b+z(x-c).
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-    z = np.zeros(N)
-
-    x[0] = np.random.uniform(lx, rx)
-    y[0] = np.random.uniform(ly, ry)
-    z[0] = z0
-
-    def derivatives(state):
-        x, y, z = state
-        dx = -y - z
-        dy = x + a*y
-        dz = b + z*(x - c)
-        return np.array([dx, dy, dz])
-
-    # RK4 integration
-    for i in range(N - 1):
-        state = np.array([x[i], y[i], z[i]])
-
-        k1 = derivatives(state)
-        k2 = derivatives(state + dt*k1/2)
-        k3 = derivatives(state + dt*k2/2)
-        k4 = derivatives(state + dt*k3)
-
-        next_state = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6
-
-        x[i+1], y[i+1], z[i+1] = next_state
-
-    return np.mean([x, y, z])
-
+    
 
 # Other deterministic models
-def linear_log(N,a=0.5,b=4):
-    """
-    Linear model x[t+1] = ax[t] + epsilon[t] 
-    with deterministic logistic noise source epsilon[t] = 4*epsilon[t-1](1-epsilon[t-1]).
-    """
-    x = np.zeros(N)
-    epsilon = np.zeros(N)
-    epsilon[0] = rand_init()      # the notebook's zero start is a fixed point: epsilon stays 0
-
-    for t in range(1,N-1):
-        epsilon[t] = b*epsilon[t-1]*(1-epsilon[t-1])
-        x[t+1] = a*x[t]+epsilon[t]
-
-    return x
-
-def mod1(N,a=np.sqrt(2)):
-    """
-    Modulo-1 model x[t] = ax[t-1] mod 1
-    """
-    x = np.zeros(N)
-    x[0] = rand_init()            # zero is a fixed point of x -> a x mod 1
-
-    for t in range(1,N):
-        x[t] = a*x[t-1] % 1
-
-    return x
-
 def lin_oscillator(N,lx=-2,rx=2,ly=-2,ry=2,dt=0.01):
     """
     Linearised oscillator with dynamics described by d^2x/dt^2 + x = 0, y = dx/dt, dy/dt=-x.
@@ -454,36 +283,6 @@ def lin_oscillator(N,lx=-2,rx=2,ly=-2,ry=2,dt=0.01):
     def derivatives(state):
         x, y = state
         return np.array([y, -x])
-
-    for i in range(N - 1):
-        state = np.array([x[i], y[i]])
-
-        k1 = derivatives(state)
-        k2 = derivatives(state + dt*k1/2)
-        k3 = derivatives(state + dt*k2/2)
-        k4 = derivatives(state + dt*k3)
-
-        state_next = state + dt*(k1 + 2*k2 + 2*k3 + k4)/6
-        x[i+1], y[i+1] = state_next
-
-    return x
-
-def dvp_oscillator(N,lx=-2,rx=2,ly=-2,ry=2,mu=1,dt=0.01):
-    """
-    Van der Pol oscillator, specified by d^2x/dt^2 - mu(1-x^2)dx/dt + x = 0, y=dx/dt, dy/dt = mu(1-x^2)y - x.
-    Default value mu=1 includes nonlinear damping.
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-
-    x[0] = np.random.uniform(lx,lr)
-    y[0] = np.random.uniform(ly,ry)
-
-    def derivatives(state):
-        x, y = state
-        dx = y
-        dy = mu*(1 - x**2)*y - x
-        return np.array([dx, dy])
 
     for i in range(N - 1):
         state = np.array([x[i], y[i]])
@@ -521,20 +320,6 @@ def mackey_glass(N,l=0,r=1.5,beta0=0.2,gamma=0.1,n=10,tau=17,dt=1):
 
 
 # Other stochastic processes
-def stochastic_sine(N,mu=2.4,p=0.01,a=-2,b=2):
-    """
-    Stochastic noise-driven sine map defined by x[t+1] = mu*sin(x[t]) + y[t]*eta[t],
-    with y[t]~Ber(p), eta[t]~U(a,b).
-    """
-    x = np.zeros(N)
-    y = np.random.binomial(1,p,N)
-    eta = np.random.uniform(a,b,N)
-
-    for t in range(N-1):
-        x[t+1] = mu*sin(x[t]) + y[t]*eta[t]
-
-    return x
-
 def weiner(dt):
     """
     HELPER
@@ -556,118 +341,46 @@ def ornstein_uhlenbeck(N,theta=0.8,sigma=0.3,x0=0,dt=0.01):
 
     return x
 
-def BRW(N,k=-2,alpha1=2,alpha2=2,sigma=4,beta=0.1,x0=0,tau=0,dt=0.001):
-    """
-    Bounded Random Walk defined by dx = e^k(e^(-alpha1(x-tau))=e^(alpha2(x-tau)))*dt + e^(sigma/2 + 2x[t]^2)*dW.
-    """
-    x = np.zeros(N)
-    x[0] = x0
-
-    for t in range(N-1):
-        dW = weiner(dt)
-        drift = np.exp(k)*(np.exp(-alpha1*(x[t]-tau)) + np.exp(alpha2*(x[t]-tau)))
-        diffusion = np.exp(sigma/2 + beta/2*x[t]**2)
-        dx = drift*dt + diffusion*dW
-        x[t+1] = x[t] + dx
-
-    return x
-
-def stochastic_lorenz(N,lx=-8,rx=8,ly=-8,ry=8,lz=0,rz=10,sigma=10,rho=28,beta=8/3,noise=1.5,dt=0.01):
-    """
-    Sum of three independent Lorenz systems with equations dx/dt=sigma(y-x), dy/dt=x(rho-z)-y, dz/dt=xy-betaz 
-    with additive Weiner processes attached to each element of the process.
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-    z = np.zeros(N)
-
-    x[0] = np.random.uniform(lx,rx)
-    y[0] = np.random.uniform(ly,ry)
-    z[0] = np.random.uniform(lz,rz)
-
-    for t in range(N-1):
-        dx = sigma*(y[t]-x[t])
-        dy = x[t]*(rho-z[t]) - y[t]
-        dz = x[t]*y[t] - beta*z[t]
-
-        dWx = weiner(dt)
-        dWy = weiner(dt)
-        dWz = weiner(dt)
-
-        x[t+1] = x[t] + dx*dt + noise*dWx
-        y[t+1] = y[t] + dy*dt + noise*dWy
-        z[t+1] = z[t] + dz*dt + noise*dWz
-
-    return np.mean([x, y, z])
-
-def stochastic_rossler(N,lx=-8,rx=8,ly=-8,ry=8,z0=0,a=0.2,b=0.2,c=5.7,noise=1.5,dt=0.01):
-    """
-    Sum of three independent Rossler systems with dx/dt=-y-z, dy/dt=x+ay, dz/dt=b+z(x-c).
-    """
-    x = np.zeros(N)
-    y = np.zeros(N)
-    z = np.zeros(N)
-
-    x[0] = np.random.uniform(lx, rx)
-    y[0] = np.random.uniform(ly, ry)
-    z[0] = z0
-
-    for t in range(N-1):
-        dx = -y[t] - z[t]
-        dy = x[t] + a*y[t] 
-        dz = b + z[t]*(x[t]-c)
-
-        dWx = weiner(dt)
-        dWy = weiner(dt)
-        dWz = weiner(dt)
-        
-        x[t+1] = x[t] + dx*dt + noise*dWx
-        y[t+1] = y[t] + dy*dt + noise*dWy
-        z[t+1] = z[t] + dz*dt + noise*dWz
-
-    return np.mean([x, y, z])
-
-
-# Edited lists to remove problems because I simply can't be arsed
+# List of included processes
+# Edited lists to remove problematic and simple noise functions
 functions = [
-    gauss_noise, uniform_noise, pink_noise, red_noise, violet_noise, gamma_noise, laplace_noise,
+    pink_noise, red_noise, violet_noise, gamma_noise, laplace_noise,
     AR1, static_AR1, uniform_AR1, ARMA11, AR3_gamma, SETAR2111, SETAR2222, nl_AR2,
-    arnold_cat, chirikov, quad, logistic_4, logistic_38,
+    arnold_cat, chirikov, quad, logistic_4,
     
-    linear_log, mod1, lin_oscillator, mackey_glass,
+    lin_oscillator, mackey_glass,
      ornstein_uhlenbeck, 
 ]
 time_reversible = [
-    True, True, True, True, True, True, True,
+    True, True, True, True, True,
     True, True, False, False, False, False, False, False,
-    True, True, False, False, False,
+    True, True, False, False,
     
-    False, False, True, False,
+    True, False,
     True, 
 ]
 
 discrete = [
-    True, True, True, True, True, True, True,
-    True, True, True, True, True, True, True, True,
     True, True, True, True, True,
+    True, True, True, True, True, True, True, True,
+    True, True, True, True,
     
-    True, True, False, False,
+    False, False,
     False 
 ]
 
 labels = [
-    'Gaussian noise', 'Uniform noise', 'Pink noise', 'Red noise', 'Violet noise', 'Gamma noise', 'Laplacian noise',
+    'Pink noise', 'Red noise', 'Violet noise', 'Gamma noise', 'Laplacian noise',
     'AR(1) with Gaussian noise', 'Static trasformation of AR(1)', 'AR(1) with uniform noise', 'ARMA(1,1) with uniform noise',
     'AR(3) with gamma sampled noise', 'SETAR(2;1,1,1)', 'SETAR(2;2,2,2)', 'Nonlinear AR(2) with Laplacian noise',
-    "Arnold's Cat map", 'Chirikov standard map', 'Quadratic map', 'Chaotic logistic map', 'intermittent logistic map',
+    "Arnold's Cat map", 'Chirikov standard map', 'Quadratic map', 'Chaotic logistic map', 
     
-    'Linear model with logistic noise', 'Modulo-1 model', 'Linear oscillator', 'Mackey-Glass model',
+    'Linear oscillator', 'Mackey-Glass model',
     'Ornstein-Uhlenbeck process'
 ]
 
-print(len(functions), len(time_reversible), len(discrete), len(labels))
 
-
+# Construct simulation
 def build():
     """Simulate every generator, then permute the rows until every block mixes labels.
 
