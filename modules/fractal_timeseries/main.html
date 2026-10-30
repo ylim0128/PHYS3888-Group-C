@@ -73,14 +73,14 @@ drawn from the values embedded in this file.</p>
 <!-- ============ 1. THE TWO SERIES ============ -->
 <div class="card">
 <h2>1. The two series being mixed</h2>
-<p>Draw two independent fractional Gaussian noises, one at <span class="mono">H = 0.4</span> and one at
-<span class="mono">H = 0.9</span>, and scale each to unit variance. Mix them sample by sample at an
-angle <span class="mono">&theta;(t)</span>, then cumulatively sum the result to get the record.</p>
+<p>Draw two independent fractional Brownian motions, one at <span class="mono">H = 0.4</span> and one at
+<span class="mono">H = 0.9</span>, and scale their increments to unit variance. Mix those increments sample
+by sample at an angle <span class="mono">&theta;(t)</span>, then accumulate the result to get the record.</p>
 
 <div class="flow">
   <span class="stack">
-    <span class="node r">fGn(H&nbsp;=&nbsp;0.4) &rarr; <b>r</b></span>
-    <span class="node s">fGn(H&nbsp;=&nbsp;0.9) &rarr; <b>s</b></span>
+    <span class="node r">fBm(H&nbsp;=&nbsp;0.4) &rarr; <b>r</b></span>
+    <span class="node s">fBm(H&nbsp;=&nbsp;0.9) &rarr; <b>s</b></span>
   </span>
   <span class="arrow">&rarr;</span>
   <span class="node mix">x(t) = cos&thinsp;&theta;(t)&middot;r(t) + sin&thinsp;&theta;(t)&middot;s(t)</span>
@@ -123,7 +123,7 @@ there is:</p>
 
 <b>cos&sup2;&theta; + sin&sup2;&theta; = 1</b>  &rArr;  Var[x(t)] = 1 <span style="color:#64748b">for every t, in both classes</span></div>
 
-<p>Every sample is Gaussian with variance exactly&nbsp;1 whatever &theta; is doing, so the two classes
+<p>Every sample has variance exactly&nbsp;1 whatever &theta; is doing, so the two classes
 have <b>identical marginals</b>: same variance, same kurtosis, same spectrum. In the figure below the two
 bands change shape but always sum to the same height.</p>
 
@@ -526,7 +526,7 @@ reg(()=>{
 /* ---------------- text + tables ---------------- */
 function el(id, txt){ document.getElementById(id).innerHTML = txt; }
 
-el('cap-rs', 'Both are unit-variance fGn series on the same vertical scale. The H = 0.4 series changes ' +
+el('cap-rs', 'Both are unit-variance fBm increments on the same vertical scale. The H = 0.4 series changes ' +
   'sign from sample to sample (lag-1 autocorrelation ' + fmt(D.ac1R,3) + '); the H = 0.9 series moves ' +
   'slowly (lag-1 autocorrelation ' + fmt(D.ac1S,3) + '). The two are independent draws.');
 
@@ -582,7 +582,7 @@ document.getElementById('tbl-score').innerHTML = `
     <td>univariate, one label per record, fixed length</td></tr>
 <tr><td>univariate</td><td class="ok">met</td><td>single channel</td></tr>
 <tr><td>fractal core</td><td class="ok">met</td>
-    <td>self-affine fGn substrate; the label is the spread of the local scaling exponent</td></tr>
+    <td>self-affine fBm substrate; the label is the spread of the local scaling exponent</td></tr>
 <tr><td>not a time reversal</td><td class="ok">met</td><td>no record is reversed or mirrored</td></tr>
 <tr><td>not a parity / count</td><td class="ok">met</td><td>no counting, no modulo</td></tr>
 <tr><td>not a sign</td><td class="ok">met</td>

@@ -5,8 +5,8 @@ and verified against that page's own baked arrays:
 
     x(t)       = cos(theta(t)) * r(t) + sin(theta(t)) * s(t)
     record     = cumulative sum of x          (length ``n``)
-    r          = unit-variance fGn, H = 0.4   (rough ingredient)
-    s          = unit-variance fGn, H = 0.9   (smooth ingredient)
+    r          = unit-variance fBm increments, H = 0.4   (rough ingredient)
+    s          = unit-variance fBm increments, H = 0.9   (smooth ingredient)
     label 0    = theta(t) = pi/4              (dial frozen)
     label 1    = theta(t) = pi/4 + 0.7 * c(t) (dial drifts)
 
@@ -18,7 +18,7 @@ away, only the dispersion of roughness *between* windows.
 
 ``c(t)`` survives in the page only folded into theta. Recovering it gives min
 -0.669, max 1.000, mean 0.089, std 0.332 and lag-1 autocorrelation 0.989, so it
-is a very smooth zero-mean field; here it is Gaussian-smoothed white noise
+is a very smooth zero-mean field; here it is smoothed white noise
 standardised to zero mean and std 0.33.
 
 The reader on the page, and the only thing that separates the classes, is the
