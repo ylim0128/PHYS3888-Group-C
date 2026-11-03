@@ -236,13 +236,6 @@ four tests come out flat:</p>
 <p class="cap" id="cap-gates"></p>
 </div>
 
-<!-- ============ 6. REQUIREMENTS ============ -->
-<div class="card">
-<h2>6. Requirements</h2>
-<div class="tscroll"><table id="tbl-score"></table></div>
-<p class="cap" id="cap-score"></p>
-</div>
-
 <footer id="foot"></footer>
 </div>
 
@@ -572,29 +565,6 @@ ${g.arms.map(a=>`<tr><td>${a.name}</td><td class="mono">${fmt(a.cv,3)}</td><td c
     <td class="${a.margin<0?'ok':'warn'}">${a.margin<0?'blind (negative margin)':'above null'}</td></tr>`).join('')}
 <tr><td>global marginal battery</td><td class="mono">${fmt(g.battery,3)}</td><td class="mono">n/a</td>
     <td class="mono">n/a</td><td class="${g.batteryP>0.05?'ok':'no'}">blind (family p = ${fmt(g.batteryP,3)})</td></tr>`;
-
-el('cap-score', 'Every requirement holds except reader strength: the label is recoverable in ' +
-  'principle, but no reader tried here scores well on it.');
-
-document.getElementById('tbl-score').innerHTML = `
-<tr><th>requirement</th><th>status</th><th>evidence</th></tr>
-<tr><td>one record in, one label out (UCR / UEA style)</td><td class="ok">met</td>
-    <td>univariate, one label per record, fixed length</td></tr>
-<tr><td>univariate</td><td class="ok">met</td><td>single channel</td></tr>
-<tr><td>fractal core</td><td class="ok">met</td>
-    <td>self-affine fBm substrate; the label is the spread of the local scaling exponent</td></tr>
-<tr><td>not a time reversal</td><td class="ok">met</td><td>no record is reversed or mirrored</td></tr>
-<tr><td>not a parity / count</td><td class="ok">met</td><td>no counting, no modulo</td></tr>
-<tr><td>not a sign</td><td class="ok">met</td>
-    <td>the label is a <b>dispersion</b>, a magnitude of heterogeneity, not a direction</td></tr>
-<tr><td>ROCKET-blind</td><td class="ok">met</td>
-    <td>rocket ${fmt(g.arms[0].cv,3)}, minirocket ${fmt(g.arms[1].cv,3)}, multirocket ${fmt(g.arms[2].cv,3)}, all negative margins</td></tr>
-<tr><td>calibrated marginal battery clean</td><td class="ok">met</td>
-    <td>${fmt(g.battery,3)} at family p = ${fmt(g.batteryP,3)}</td></tr>
-<tr><td>invariant to the analyst's free choices</td><td class="ok">met</td>
-    <td>no threshold, window or resolution choice in the label definition; the reader needs none</td></tr>
-<tr><td>process-aware reader scores well</td><td class="no">not met</td>
-    <td>reader CV = ${fmt(g.readerCV,3)}, weak. This is the open problem.</td></tr>`;
 
 el('foot', 'Values computed with <code>fractal_bench.selfaffine.fgn</code>, ' +
   '<code>rocket_port.rocket_features</code>, <code>audit.signal_features</code>, ' +
